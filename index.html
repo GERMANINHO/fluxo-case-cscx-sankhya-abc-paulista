@@ -32,7 +32,7 @@
     .svg-container{
       position:relative;
       width:100%;
-      padding-bottom:120%; /* mais altura para caber o fluxo todo */
+      padding-bottom:60%; /* mais largo que alto, igual aos outros fluxos */
       overflow:hidden;
       background:var(--bg);
     }
@@ -178,7 +178,7 @@
 
     @media (max-width:768px){
       .wrapper{ padding:16px; }
-      .svg-container{ padding-bottom:140%; }
+      .svg-container{ padding-bottom:90%; }
     }
   </style>
 </head>
@@ -187,7 +187,7 @@
 <div class="wrapper">
   <div class="svg-container">
     <svg version="1.1"
-         viewBox="0 0 520 620"
+         viewBox="0 0 900 420"
          preserveAspectRatio="xMinYMin meet"
          class="svg-content"
          aria-labelledby="fluxo-title fluxo-desc"
@@ -206,106 +206,127 @@
 
       <!-- START -->
       <g>
-        <circle fill="#000" cx="220" cy="50" r="35"/>
-        <text x="220" y="50" text-anchor="middle" dominant-baseline="middle"
+        <circle fill="#000" cx="90" cy="115" r="45"/>
+        <text x="90" y="115" text-anchor="middle" dominant-baseline="middle"
               font-family="Open Sans Condensed" font-size="20" fill="#f5f3e7" font-weight="100"
               style="text-transform:uppercase; letter-spacing:1px">Início</text>
       </g>
 
+      <!-- ==== LINHA 1 (topo) ==== -->
+      <!-- Medidas dos blocos: 170 x 70 -->
       <!-- Selecionar cliente -->
       <g class="node" id="node-cliente" tabindex="0" role="button"
          aria-label="Selecionar cliente candidato ao CASE"
-         transform="translate(150,100)" style="--pulse-color:#66cc00;">
-        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="140" height="60"/>
-        <rect class="main"  x="0" y="0" rx="4" ry="4" width="140" height="60" fill="#66cc00"/>
-        <text class="node-label xxs" x="70" y="20" text-anchor="middle">
-          <tspan x="70" dy="0">Selecionar cliente</tspan>
-          <tspan x="70" dy="10">candidato ao CASE</tspan>
+         transform="translate(200,80)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="170" height="70"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="170" height="70" fill="#66cc00"/>
+        <text class="node-label xxs" x="85" y="25" text-anchor="middle">
+          <tspan x="85" dy="0">Selecionar cliente</tspan>
+          <tspan x="85" dy="12">candidato ao CASE</tspan>
         </text>
       </g>
 
       <!-- Analisar uso e resultados -->
       <g class="node" id="node-analise-uso" tabindex="0" role="button"
          aria-label="Analisar uso e resultados"
-         transform="translate(150,170)" style="--pulse-color:#66cc00;">
-        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="140" height="60"/>
-        <rect class="main"  x="0" y="0" rx="4" ry="4" width="140" height="60" fill="#66cc00"/>
-        <text class="node-label xxs" x="70" y="18" text-anchor="middle">
-          <tspan x="70" dy="0">Analisar uso</tspan>
-          <tspan x="70" dy="10">e resultados</tspan>
+         transform="translate(400,80)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="170" height="70"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="170" height="70" fill="#66cc00"/>
+        <text class="node-label xxs" x="85" y="25" text-anchor="middle">
+          <tspan x="85" dy="0">Analisar uso</tspan>
+          <tspan x="85" dy="12">e resultados</tspan>
         </text>
       </g>
 
-      <!-- Definir tipo de Case -->
+      <!-- Definir tipo de CASE -->
       <g class="node" id="node-tipo-case" tabindex="0" role="button"
          aria-label="Definir tipo de Case"
-         transform="translate(150,240)" style="--pulse-color:#66cc00;">
-        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="140" height="60"/>
-        <rect class="main"  x="0" y="0" rx="4" ry="4" width="140" height="60" fill="#66cc00"/>
-        <text class="node-label xxs" x="70" y="18" text-anchor="middle">
-          <tspan x="70" dy="0">Definir tipo</tspan>
-          <tspan x="70" dy="10">de CASE</tspan>
+         transform="translate(600,80)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="170" height="70"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="170" height="70" fill="#66cc00"/>
+        <text class="node-label xxs" x="85" y="25" text-anchor="middle">
+          <tspan x="85" dy="0">Definir tipo</tspan>
+          <tspan x="85" dy="12">de CASE</tspan>
         </text>
       </g>
+
+      <!-- ==== LINHA 2 (embaixo) ==== -->
 
       <!-- Construir narrativa -->
       <g class="node" id="node-narrativa" tabindex="0" role="button"
          aria-label="Construir narrativa do depoimento"
-         transform="translate(150,310)" style="--pulse-color:#66cc00;">
-        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="140" height="60"/>
-        <rect class="main"  x="0" y="0" rx="4" ry="4" width="140" height="60" fill="#66cc00"/>
-        <text class="node-label xxs" x="70" y="18" text-anchor="middle">
-          <tspan x="70" dy="0">Construir</tspan>
-          <tspan x="70" dy="10">narrativa</tspan>
-          <tspan x="70" dy="10">do depoimento</tspan>
+         transform="translate(200,250)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="170" height="70"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="170" height="70" fill="#66cc00"/>
+        <text class="node-label xxs" x="85" y="23" text-anchor="middle">
+          <tspan x="85" dy="0">Construir</tspan>
+          <tspan x="85" dy="12">narrativa</tspan>
+          <tspan x="85" dy="12">do depoimento</tspan>
         </text>
       </g>
 
-      <!-- Registrar no SenseData -->
+      <!-- Registrar Case -->
       <g class="node" id="node-registro" tabindex="0" role="button"
          aria-label="Registrar e enviar para triagem no SenseData"
-         transform="translate(150,380)" style="--pulse-color:#66cc00;">
-        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="140" height="60"/>
-        <rect class="main"  x="0" y="0" rx="4" ry="4" width="140" height="60" fill="#66cc00"/>
-        <text class="node-label xxs" x="70" y="18" text-anchor="middle">
-          <tspan x="70" dy="0">Registrar CASE</tspan>
-          <tspan x="70" dy="10">e enviar para</tspan>
-          <tspan x="70" dy="10">triagem</tspan>
+         transform="translate(400,250)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="170" height="70"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="170" height="70" fill="#66cc00"/>
+        <text class="node-label xxs" x="85" y="23" text-anchor="middle">
+          <tspan x="85" dy="0">Registrar CASE</tspan>
+          <tspan x="85" dy="12">e enviar para</tspan>
+          <tspan x="85" dy="12">triagem</tspan>
         </text>
       </g>
 
       <!-- Aprovação, publicação e incentivos -->
       <g class="node" id="node-incentivo" tabindex="0" role="button"
          aria-label="Aprovação, publicação e incentivos"
-         transform="translate(150,450)" style="--pulse-color:#66cc00;">
-        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="140" height="60"/>
-        <rect class="main"  x="0" y="0" rx="4" ry="4" width="140" height="60" fill="#66cc00"/>
-        <text class="node-label xxxs" x="70" y="16" text-anchor="middle">
-          <tspan x="70" dy="0">Aprovação,</tspan>
-          <tspan x="70" dy="9">publicação no OM</tspan>
-          <tspan x="70" dy="9">e incentivos</tspan>
+         transform="translate(600,250)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="170" height="70"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="170" height="70" fill="#66cc00"/>
+        <text class="node-label xxxs" x="85" y="20" text-anchor="middle">
+          <tspan x="85" dy="0">Aprovação,</tspan>
+          <tspan x="85" dy="10">publicação no OM</tspan>
+          <tspan x="85" dy="10">e incentivos</tspan>
         </text>
       </g>
 
       <!-- FIM -->
       <g>
-        <circle fill="#000" cx="220" cy="560" r="35"/>
-        <text x="220" y="560" text-anchor="middle" dominant-baseline="middle"
+        <circle fill="#000" cx="820" cy="285" r="35"/>
+        <text x="820" y="285" text-anchor="middle" dominant-baseline="middle"
               font-family="Open Sans Condensed" font-size="18" fill="#f5f3e7" font-weight="100"
               style="text-transform:uppercase; letter-spacing:1px">Fim</text>
       </g>
 
-      <!-- Conexões sequenciais com setas -->
-      <line x1="220" y1="85"  x2="220" y2="100" class="edge--dotted" marker-end="url(#arrow)" />
-      <line x1="220" y1="160" x2="220" y2="170" class="edge--dotted" marker-end="url(#arrow)" />
-      <line x1="220" y1="230" x2="220" y2="240" class="edge--dotted" marker-end="url(#arrow)" />
-      <line x1="220" y1="300" x2="220" y2="310" class="edge--dotted" marker-end="url(#arrow)" />
-      <line x1="220" y1="370" x2="220" y2="380" class="edge--dotted" marker-end="url(#arrow)" />
-      <line x1="220" y1="440" x2="220" y2="450" class="edge--dotted" marker-end="url(#arrow)" />
-      <line x1="220" y1="510" x2="220" y2="525" class="edge--dotted" marker-end="url(#arrow)" />
+      <!-- ===== Conexões com setas ===== -->
+
+      <!-- Início -> Selecionar -->
+      <line x1="135" y1="115" x2="200" y2="115" class="edge--dotted" marker-end="url(#arrow)" />
+
+      <!-- Selecionar -> Analisar -->
+      <line x1="370" y1="115" x2="400" y2="115" class="edge--dotted" marker-end="url(#arrow)" />
+
+      <!-- Analisar -> Definir -->
+      <line x1="570" y1="115" x2="600" y2="115" class="edge--dotted" marker-end="url(#arrow)" />
+
+      <!-- Definir -> Construir (caminho em "U", sem cruzar nada) -->
+      <path d="M685 150 L685 205 L285 205 L285 250"
+            class="edge--dotted" marker-end="url(#arrow)" />
+
+      <!-- Construir -> Registrar -->
+      <line x1="370" y1="285" x2="400" y2="285" class="edge--dotted" marker-end="url(#arrow)" />
+
+      <!-- Registrar -> Aprovação -->
+      <line x1="570" y1="285" x2="600" y2="285" class="edge--dotted" marker-end="url(#arrow)" />
+
+      <!-- Aprovação -> Fim -->
+      <line x1="770" y1="285" x2="785" y2="285" class="edge--dotted" marker-end="url(#arrow)" />
     </svg>
   </div>
 </div>
+
+<!-- MODAIS (iguais aos anteriores) -->
 
 <!-- MODAL: Seleção do cliente -->
 <div class="modal" id="modal-cliente" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-cliente-title">
