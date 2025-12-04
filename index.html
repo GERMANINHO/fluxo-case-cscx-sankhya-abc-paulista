@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fluxo - Case - CS/CX - Sankhya ABC Paulista</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:wght@300;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f5f3e7;
+      --text:#443c3d;
+      --green:#66cc00;
+      --purple:#72508d;
+      --modal-bg:#ffffff;
+      --overlay:rgba(0,0,0,.45);
+      --btn-bg:#0f172a0f;
+      --btn-border:#cbd5e1;
+      --btn-hover:#0f172a14;
+      --btn-text:#0f172a;
+    }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:"Open Sans Condensed",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+
+    .wrapper{ padding:40px 60px; }
+
+    .svg-container{
+      position:relative;
+      width:100%;
+      padding-bottom:80%;
+      overflow:hidden;
+      background:var(--bg);
+    }
+    .svg-content{
+      position:absolute;
+      inset:0;
+    }
+
+    .node{ cursor:pointer; outline:none; }
+    .node-label{
+      font-family:"Open Sans Condensed",Arial,sans-serif;
+      font-weight:900;
+      fill:#f5f3e7;
+      text-transform:uppercase;
+      letter-spacing:.45px;
+      font-size:10px;
+      pointer-events:none;
+    }
+    .node-label.xs{   font-size:8px;  letter-spacing:.32px; }
+    .node-label.xxs{  font-size:7px;  letter-spacing:.28px; }
+    .node-label.xxxs{ font-size:6px;  letter-spacing:.26px; }
+
+    .node rect.main{
+      transition:transform .15s ease,filter .25s ease;
+    }
+    .node:hover rect.main,
+    .node:focus rect.main{
+      transform:translateY(-1px);
+      filter:brightness(1.05) saturate(1.02) drop-shadow(0 8px 18px rgba(0,0,0,.18));
+    }
+
+    .node .pulse{
+      fill:var(--pulse-color,#66cc00);
+      fill-opacity:.10;
+      opacity:0;
+      transform-box:fill-box;
+      transform-origin:center;
+      pointer-events:none;
+    }
+    .node:hover .pulse,
+    .node:focus .pulse{
+      animation:pulseAnim 1.1s ease-out infinite;
+      opacity:1;
+    }
+
+    @keyframes pulseAnim{
+      0%{transform:scale(1);opacity:.55}
+      70%{transform:scale(1.18);opacity:0}
+      100%{transform:scale(1.18);opacity:0}
+    }
+
+    .edge--dotted{
+      stroke:#333;
+      stroke-width:2;
+      stroke-dasharray:2 1;
+      fill:none;
+      stroke-linecap:round;
+    }
+
+    /* ===== Modal ===== */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:var(--overlay);
+      z-index:999;
+    }
+    .modal.open{ display:flex; }
+    .modal__panel{
+      background:var(--modal-bg);
+      color:var(--text);
+      width:min(92vw,720px);
+      border-radius:16px;
+      box-shadow:0 10px 40px rgba(0,0,0,.25);
+      padding:20px 20px 16px;
+      border:1px solid #e2e8f0;
+      max-height:86vh;
+      overflow:auto;
+    }
+    .modal__header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px;
+    }
+    .modal__title{
+      margin:0;
+      font-size:20px;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+    .modal__close{
+      appearance:none;
+      border:0;
+      background:transparent;
+      font-size:20px;
+      line-height:1;
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+      color:var(--btn-text);
+    }
+    .modal__close:hover{ background:#0001; }
+    .modal__body{ padding:8px 2px 0; }
+    .modal__body h3{ margin:12px 0 6px; font-size:16px; }
+    .modal__body p{ margin:4px 0; font-size:14px; }
+    .modal__body ul, .modal__body ol{ margin:4px 0 8px 18px; font-size:14px; }
+    .modal__actions{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    .btn{
+      display:inline-block;
+      text-decoration:none;
+      text-align:center;
+      padding:12px 16px;
+      border-radius:12px;
+      border:1px solid var(--btn-border);
+      background:var(--btn-bg);
+      color:var(--btn-text);
+      font-weight:700;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      transition:background .2s,box-shadow .2s,transform .06s;
+    }
+    .btn:hover,.btn:focus{
+      background:var(--btn-hover);
+      box-shadow:0 0 0 2px #00000010 inset;
+    }
+    .btn:active{ transform:translateY(1px); }
+    .btn--green{ border-color:#86efac; }
+    .btn--purple{ border-color:#d8b4fe; }
+    .modal__hint{
+      margin:6px 2px 0;
+      font-size:12px;
+      opacity:.75;
+    }
+
+    @media (max-width:768px){
+      .wrapper{ padding:16px; }
+      .svg-container{ padding-bottom:120%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="svg-container">
+    <svg version="1.1"
+         viewBox="0 0 520 420"
+         preserveAspectRatio="xMinYMin meet"
+         class="svg-content"
+         aria-labelledby="fluxo-title fluxo-desc"
+         role="img"
+         xmlns="http://www.w3.org/2000/svg">
+      <title id="fluxo-title">Fluxo Case - Provas sociais de satisfação</title>
+      <desc id="fluxo-desc">Fluxograma do processo de seleção, construção e registro de CASES de clientes Sankhya.</desc>
+
+      <!-- START -->
+      <g transform="translate(5,45)">
+        <circle fill="#000" cx="55" cy="55" r="40"/>
+        <text x="55" y="55" text-anchor="middle" dominant-baseline="middle"
+              font-family="Open Sans Condensed" font-size="20" fill="#f5f3e7" font-weight="100"
+              style="text-transform:uppercase; letter-spacing:1px">Início</text>
+      </g>
+
+      <!-- Linha 1 -->
+      <!-- Seleção do cliente -->
+      <g class="node" id="node-cliente" tabindex="0" role="button"
+         aria-label="Selecionar cliente candidato ao CASE"
+         transform="translate(140,45)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="120" height="60"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="120" height="60" fill="#66cc00"/>
+        <text class="node-label xxs" x="60" y="20" text-anchor="middle">
+          <tspan x="60" dy="0">Selecionar cliente</tspan>
+          <tspan x="60" dy="10">candidato ao CASE</tspan>
+        </text>
+      </g>
+
+      <!-- Analisar uso e resultados -->
+      <g class="node" id="node-analise-uso" tabindex="0" role="button"
+         aria-label="Analisar uso e resultados"
+         transform="translate(310,45)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="120" height="60"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="120" height="60" fill="#66cc00"/>
+        <text class="node-label xxs" x="60" y="18" text-anchor="middle">
+          <tspan x="60" dy="0">Analisar uso</tspan>
+          <tspan x="60" dy="10">e resultados</tspan>
+        </text>
+      </g>
+
+      <!-- Conexões linha 1 -->
+      <line x1="100" y1="100" x2="140" y2="75" class="edge--dotted" />
+      <line x1="260" y1="75" x2="310" y2="75" class="edge--dotted" />
+
+      <!-- Linha 2 -->
+      <!-- Definir tipo de Case -->
+      <g class="node" id="node-tipo-case" tabindex="0" role="button"
+         aria-label="Definir tipo de Case"
+         transform="translate(140,185)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="120" height="60"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="120" height="60" fill="#66cc00"/>
+        <text class="node-label xxs" x="60" y="18" text-anchor="middle">
+          <tspan x="60" dy="0">Definir tipo</tspan>
+          <tspan x="60" dy="10">de CASE</tspan>
+        </text>
+      </g>
+
+      <!-- Construir narrativa -->
+      <g class="node" id="node-narrativa" tabindex="0" role="button"
+         aria-label="Construir narrativa do depoimento"
+         transform="translate(310,185)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="120" height="60"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="120" height="60" fill="#66cc00"/>
+        <text class="node-label xxs" x="60" y="18" text-anchor="middle">
+          <tspan x="60" dy="0">Construir</tspan>
+          <tspan x="60" dy="10">narrativa</tspan>
+          <tspan x="60" dy="10">do depoimento</tspan>
+        </text>
+      </g>
+
+      <!-- Conexões linha 2 -->
+      <line x1="200" y1="105" x2="200" y2="185" class="edge--dotted" />
+      <line x1="370" y1="105" x2="370" y2="185" class="edge--dotted" />
+      <line x1="260" y1="215" x2="310" y2="215" class="edge--dotted" />
+
+      <!-- Linha 3 -->
+      <!-- Registrar no SenseData -->
+      <g class="node" id="node-registro" tabindex="0" role="button"
+         aria-label="Registrar e enviar para triagem no SenseData"
+         transform="translate(140,310)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="120" height="60"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="120" height="60" fill="#66cc00"/>
+        <text class="node-label xxs" x="60" y="18" text-anchor="middle">
+          <tspan x="60" dy="0">Registrar CASE</tspan>
+          <tspan x="60" dy="10">e enviar para</tspan>
+          <tspan x="60" dy="10">triagem</tspan>
+        </text>
+      </g>
+
+      <!-- Aprovação, publicação e incentivos -->
+      <g class="node" id="node-incentivo" tabindex="0" role="button"
+         aria-label="Aprovação, publicação e incentivos"
+         transform="translate(310,310)" style="--pulse-color:#66cc00;">
+        <rect class="pulse" x="0" y="0" rx="8" ry="8" width="120" height="60"/>
+        <rect class="main"  x="0" y="0" rx="4" ry="4" width="120" height="60" fill="#66cc00"/>
+        <text class="node-label xxxs" x="60" y="16" text-anchor="middle">
+          <tspan x="60" dy="0">Aprovação,</tspan>
+          <tspan x="60" dy="9">publicação no OM</tspan>
+          <tspan x="60" dy="9">e incentivos</tspan>
+        </text>
+      </g>
+
+      <!-- END -->
+      <g transform="translate(430,295)">
+        <circle fill="#000" cx="40" cy="40" r="35"/>
+        <text x="40" y="40" text-anchor="middle" dominant-baseline="middle"
+              font-family="Open Sans Condensed" font-size="18" fill="#f5f3e7" font-weight="100"
+              style="text-transform:uppercase; letter-spacing:1px">Fim</text>
+      </g>
+
+      <!-- Conexões linha 3 -->
+      <line x1="200" y1="245" x2="200" y2="310" class="edge--dotted" />
+      <line x1="370" y1="245" x2="370" y2="310" class="edge--dotted" />
+      <line x1="260" y1="340" x2="310" y2="340" class="edge--dotted" />
+      <line x1="430" y1="340" x2="420" y2="340" class="edge--dotted" />
+    </svg>
+  </div>
+</div>
+
+<!-- MODAL: Seleção do cliente -->
+<div class="modal" id="modal-cliente" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-cliente-title">
+  <div class="modal__panel" role="document">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-cliente-title">Selecionar cliente candidato ao CASE</h2>
+      <button class="modal__close" type="button" id="modal-cliente-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal__body">
+      <p>Objetivo: escolher clientes com alto potencial de prova social de satisfação.</p>
+
+      <h3>Passos básicos do fluxo Case</h3>
+      <ol>
+        <li><strong>Não ter chamado o cliente no ano vigente</strong> para participar de um CASE.</li>
+        <li>Garantir que o cliente não possui <strong>CASE publicado nos últimos 12 meses</strong>.</li>
+        <li>Verificar se o AE foi realizado nos últimos 12 meses e se a etapa de <strong>apresentação do plano de evolução</strong> está concluída com anexo.</li>
+        <li>Checar se o cliente está adimplente (sem mensalidades em atraso).</li>
+        <li>Confirmar que o cliente não tem <strong>reclamações nos últimos 3 meses</strong> e que reclamações anteriores foram tratadas.</li>
+      </ol>
+
+      <h3>Fontes de informação</h3>
+      <ul>
+        <li><strong>Analytics AI &gt; SankhyaMitraBI &gt; CX &gt; CS - Acompanhamento Evolutivo (Novo)</strong><br>
+          ID: <code>br.com.sankhya.analytics2.new.sc.t_4312.5.2265</code> — usar para conferir AE realizados e plano de evolução.</li>
+        <li><strong>Sensedata / Health Score</strong> — validar saúde geral do cliente e histórico de interações.</li>
+        <li><strong>Financeiro / Cobrança</strong> — confirmar ausência de inadimplência.</li>
+      </ul>
+
+      <p>Somente avance no fluxo se o cliente estiver elegível em todos os critérios acima.</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Analisar uso e resultados -->
+<div class="modal" id="modal-analise-uso" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-analise-uso-title">
+  <div class="modal__panel" role="document">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-analise-uso-title">Analisar uso e resultados</h2>
+      <button class="modal__close" type="button" id="modal-analise-uso-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal__body">
+      <p>Objetivo: comprovar que o cliente evoluiu com a solução Sankhya.</p>
+
+      <h3>1. Uso da solução</h3>
+      <ul>
+        <li>Acessar a tela <strong>Dashboards &gt; Customer Success &gt; CS - Dados de Uso NEW</strong><br>
+          ID: <code>br.com.sankhya.menu.adicional.nuDsb.1691.1</code>.</li>
+        <li>Analisar indicadores como:
+          <ul>
+            <li>Total de acessos, quantidade de usuários e média de acessos;</li>
+            <li>Adoção WEB x MGE;</li>
+            <li>Adoção por módulo.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>2. Resultados de negócio</h3>
+      <p>Quando o uso ainda é baixo, o CASE pode evidenciar resultados por:</p>
+      <ul>
+        <li><strong>Vendas e MRR</strong>: aumento de faturamento, novos contratos, upsell;</li>
+        <li><strong>Serviços</strong>: projetos concluídos que geraram ganhos claros de produtividade, acuracidade, qualidade, etc.</li>
+      </ul>
+
+      <p>Em qualquer cenário, registre números e fatos concretos para embasar o depoimento (antes x depois).</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Definir tipo de CASE -->
+<div class="modal" id="modal-tipo-case" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-tipo-case-title">
+  <div class="modal__panel" role="document">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-tipo-case-title">Definir tipo de CASE</h2>
+      <button class="modal__close" type="button" id="modal-tipo-case-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal__body">
+      <p>Objetivo: escolher o formato mais adequado para registrar a prova social.</p>
+
+      <h3>Depoimentos (conceito geral)</h3>
+      <p>Declarações que descrevem a satisfação e a evolução do cliente com a solução Sankhya. Podem ser apresentadas por vídeo ou por e-mail.</p>
+      <p><strong>Importante:</strong> depoimentos por WhatsApp <strong>não serão mais aceitos</strong>.</p>
+
+      <h3>1. Case por e-mail</h3>
+      <ul>
+        <li>Texto estruturado pelo cliente (ou em conjunto com o CS) descrevendo a experiência;</li>
+        <li>Ideal que venha em papel timbrado ou enviado por e-mail corporativo do cliente;</li>
+        <li>Deve conter contexto, ganhos, evolução e percepção da equipe.</li>
+      </ul>
+
+      <h3>2. Sala do Cliente (vídeo remoto)</h3>
+      <ul>
+        <li>Gravação remota conduzida pela equipe de Marketing em parceria com Sucesso do Cliente;</li>
+        <li>Seleção e convite do cliente feitos pela unidade;</li>
+        <li>Sem custo para a unidade, mas sujeito à agenda de Marketing e à estratégia de publicação;</li>
+        <li>É responsabilidade da unidade garantir a <strong>assinatura do termo de consentimento</strong> de uso de imagem e publicação do case.</li>
+      </ul>
+
+      <h3>3. Vídeo Case profissional</h3>
+      <ul>
+        <li>Gravação presencial nas instalações do cliente com equipe profissional;</li>
+        <li>Seleção, programação, estratégia, logística e custos são definidos pela Matriz (Diretoria de Marketing);</li>
+        <li>Se a unidade quiser produzir um Vídeo Case fora da programação oficial, pode avaliar a disponibilidade da equipe e arcar com os custos.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Construir narrativa -->
+<div class="modal" id="modal-narrativa" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-narrativa-title">
+  <div class="modal__panel" role="document">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-narrativa-title">Construir narrativa do depoimento</h2>
+      <button class="modal__close" type="button" id="modal-narrativa-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal__body">
+      <p>Todo CASE, independente do formato, deve tangibilizar o valor gerado pela Sankhya.</p>
+
+      <h3>Elementos obrigatórios do CASE</h3>
+      <ul>
+        <li><strong>Dor inicial do cliente</strong> — problema ou desafio que motivou a busca pela solução;</li>
+        <li><strong>Solução proposta</strong> — como a Sankhya (produto + serviço) endereçou essa dor;</li>
+        <li><strong>Valor percebido</strong> — ganhos concretos (tempo, acuracidade, produtividade, governança, faturamento etc.);</li>
+        <li><strong>Satisfação com a experiência</strong> — percepção sobre implantação, suporte, parceria com o BP/unidade;</li>
+        <li><strong>Evolução do cliente</strong> — aumento de uso da solução, novos módulos, crescimento de vendas, melhor saúde no Health Score.</li>
+      </ul>
+
+      <p>Os depoimentos não devem ser apenas elogios à unidade ou à Matriz. Precisam mostrar a <strong>transformação</strong> vivida pelo cliente.</p>
+
+      <h3>Coerência com dados</h3>
+      <ul>
+        <li>Conectar a narrativa aos dados de uso (CS - Dados de Uso NEW);</li>
+        <li>Conectar a narrativa a indicadores de negócio (MRR, vendas, serviços);</li>
+        <li>Registrar no SenseData todas as ações que contribuíram para essa evolução (AE, projetos, treinamentos, FUP etc.).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Registro e triagem -->
+<div class="modal" id="modal-registro" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-registro-title">
+  <div class="modal__panel" role="document">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-registro-title">Registrar CASE no SenseData</h2>
+      <button class="modal__close" type="button" id="modal-registro-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal__body">
+      <p>Objetivo: formalizar o CASE para análise da Central de Sucesso do Cliente.</p>
+
+      <h3>Premissas de elegibilidade</h3>
+      <ul>
+        <li>Cliente sem reclamações nos últimos 3 meses e com reclamações antigas resolvidas;</li>
+        <li>Sem mensalidades em atraso;</li>
+        <li>Playbook de AE com etapa de <strong>apresentação do plano de evolução</strong> concluída nos últimos 12 meses, com anexo;</li>
+        <li>Somente um novo CASE por cliente a cada <strong>12 meses</strong>.</li>
+      </ul>
+
+      <h3>Registro no SenseData</h3>
+      <ul>
+        <li>A unidade deve cadastrar o possível CASE por meio do <strong>playbook específico</strong>;</li>
+        <li>Preencher todas as informações: tipo de Case, contexto, dados de uso, resultados, links/arquivos de apoio;</li>
+        <li>Registrar também as atividades que geraram a evolução (AE, projetos, treinamentos, campanhas etc.).</li>
+      </ul>
+
+      <h3>Prazos</h3>
+      <ul>
+        <li>Para ser considerado no mês, o registro deve ser feito até as <strong>17h do dia 26</strong>;</li>
+        <li>Após essa data, o CASE será contabilizado para o mês seguinte;</li>
+        <li>Todos os CASES enviados em janeiro são considerados para a <strong>meta de fevereiro</strong>.</li>
+      </ul>
+
+      <div class="modal__actions">
+        <a id="link-sensedata" class="btn btn--green"
+           href="https://sankhya.sensedata.io/portfolio"
+           target="_blank" rel="noopener noreferrer">Abrir SenseData</a>
+      </div>
+      <div class="modal__hint">Após a análise, a Central poderá solicitar ajustes. Atualize o playbook e reenvie quando necessário.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Aprovação, publicação e incentivos -->
+<div class="modal" id="modal-incentivo" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-incentivo-title">
+  <div class="modal__panel" role="document">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-incentivo-title">Aprovação, publicação e incentivos</h2>
+      <button class="modal__close" type="button" id="modal-incentivo-close" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal__body">
+      <h3>Aprovação e cadastro no Sankhya OM</h3>
+      <ul>
+        <li>Após aprovação do CASE pela Central de Sucesso do Cliente, a Matriz:</li>
+        <ul>
+          <li>Valida conteúdo, forma e evidências;</li>
+          <li>Realiza o cadastro do CASE na tela <strong>CASE</strong> do Sankhya OM;</li>
+          <li>Alinha com Marketing os próximos passos de divulgação (e-mail, Sala do Cliente, Vídeo Case etc.).</li>
+        </ul>
+      </ul>
+
+      <h3>Campanha de incentivo (Winner Circle)</h3>
+      <ul>
+        <li>A cada <strong>10% da carteira</strong> de clientes com CASES aprovados, o CS ganha <strong>1 ponto acelerador</strong> na campanha Winner Circle;</li>
+        <li>Os <strong>5 CS/GR</strong> com mais inscrições ganham um voucher de <strong>R$ 300,00</strong>;</li>
+        <li>Os <strong>12 clientes finalistas</strong> contam como case na Meta Geral de Sucesso do Cliente e o responsável (CS/GR/Gestor) recebe um <strong>ingresso VIP para o Sankhya Connection 2025</strong>;</li>
+        <li>A Unidade e o CS/GR responsável pelo cliente case premiado recebem uma <strong>placa de reconhecimento</strong> + voucher de <strong>R$ 350,00</strong> para o CS;</li>
+        <li>O case premiado é critério de desempate na Meta Geral de Sucesso do Cliente;</li>
+        <li>A apuração de pontos aceleradores e cases não é divulgada mensalmente, e sim apenas após a apuração final, entre setembro e outubro de 2025.</li>
+      </ul>
+
+      <p>Use este fluxo para conectar resultados reais do cliente à estratégia de reconhecimento e crescimento da unidade.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const pairs = [
+      { node:'node-cliente',     modal:'modal-cliente',     focus:'modal-cliente-close' },
+      { node:'node-analise-uso', modal:'modal-analise-uso', focus:'modal-analise-uso-close' },
+      { node:'node-tipo-case',   modal:'modal-tipo-case',   focus:'modal-tipo-case-close' },
+      { node:'node-narrativa',   modal:'modal-narrativa',   focus:'modal-narrativa-close' },
+      { node:'node-registro',    modal:'modal-registro',    focus:'modal-registro-close' },
+      { node:'node-incentivo',   modal:'modal-incentivo',   focus:'modal-incentivo-close' }
+    ];
+
+    let lastTrigger = null;
+
+    function openModal(modalEl, focusEl, trigger){
+      lastTrigger = trigger || null;
+      modalEl.classList.add('open');
+      modalEl.setAttribute('aria-hidden','false');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      if(focusEl){
+        setTimeout(()=>focusEl.focus(),0);
+      }
+    }
+
+    function closeModal(modalEl){
+      modalEl.classList.remove('open');
+      modalEl.setAttribute('aria-hidden','true');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      if(lastTrigger && lastTrigger.focus){
+        lastTrigger.focus();
+      }
+    }
+
+    pairs.forEach(({node,modal,focus})=>{
+      const nodeEl  = document.getElementById(node);
+      const modalEl = document.getElementById(modal);
+      const focusEl = document.getElementById(focus);
+      if(!nodeEl || !modalEl) return;
+
+      nodeEl.addEventListener('click', ()=> openModal(modalEl, focusEl, nodeEl));
+      nodeEl.addEventListener('keydown', e=>{
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          openModal(modalEl, focusEl, nodeEl);
+        }
+      });
+
+      const closeBtn = focusEl;
+      if(closeBtn){
+        closeBtn.addEventListener('click', ()=> closeModal(modalEl));
+      }
+
+      modalEl.addEventListener('click', e=>{
+        if(e.target === modalEl){ closeModal(modalEl); }
+      });
+    });
+
+    document.addEventListener('keydown', e=>{
+      if(e.key === 'Escape'){
+        document.querySelectorAll('.modal.open').forEach(m=> closeModal(m));
+      }
+    });
+
+    // fechar modal ao abrir link principal de ação (SenseData)
+    const linkSense = document.getElementById('link-sensedata');
+    const modalRegistro = document.getElementById('modal-registro');
+    if(linkSense && modalRegistro){
+      linkSense.addEventListener('click', ()=> closeModal(modalRegistro));
+    }
+  })();
+</script>
+
+</body>
+</html>
